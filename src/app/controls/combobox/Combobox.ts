@@ -1,6 +1,9 @@
 export class ComboboxItem {
-    public Text: string;
-    public Value: string;
+    constructor(
+        public Text: string,
+        public Value: string)
+    {
+    }
 }
 
 export class ComboboxConfig {

@@ -1,14 +1,14 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormControl } from '../../../../node_modules/@angular/forms';
-import { Observable } from '../../../../node_modules/rxjs';
+import { FormControl } from 'node_modules/@angular/forms';
+import { Observable } from 'node_modules/rxjs';
 import {
   startWith,
   map,
   debounceTime,
   distinctUntilChanged,
   switchMap
-} from '../../../../node_modules/rxjs/operators';
-import { HttpClient } from '../../../../node_modules/@angular/common/http';
+} from 'node_modules/rxjs/operators';
+import { HttpClient } from 'node_modules/@angular/common/http';
 import { ComboboxConfig, ComboboxItem } from './Combobox';
 
 @Component({
@@ -19,6 +19,7 @@ import { ComboboxConfig, ComboboxItem } from './Combobox';
 
 export class ComboboxComponent implements OnInit {
   @Input() config: ComboboxConfig;
+  @Input() dataSource: Observable<ComboboxItem[]>|undefined;
 
   control = new FormControl();
   filteredItems$: Observable<ComboboxItem[]>;
@@ -38,10 +39,18 @@ export class ComboboxComponent implements OnInit {
     );
   }
 
+  private getDataSource() : Observable<ComboboxItem[]>
+  {
+    if (this.dataSource){
+      return this.dataSource;
+    }
+    return this.getData();
+  }
+
   private _filter(value: string): Observable<ComboboxItem[]> {
     const filterValue = value.toLowerCase();
     return this
-      .getData()
+      .getDataSource()
       .pipe(
         map(response => {
           return response.filter(option => option.Text.toLocaleLowerCase().indexOf(filterValue) === 0);
