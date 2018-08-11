@@ -1,4 +1,6 @@
-<form class="example-form">
-  <combobox [config]="comboboxConfig"></combobox>
-  <combobox [dataSource]="getHeroes()"></combobox>
+<form>
+    <!-- <combobox #c1 [config]="comboboxConfig"></combobox><br/> -->
+    <!-- <combobox #c2 [dataSource]="getHeroes()"></combobox><br/> -->
+    <combobox #c3 [dataSource]="getSampleData()" [config]="comboboxConfig3"></combobox><br/>
+    <button mat-button (click)="handleClick()">Click!</button>
 </form>

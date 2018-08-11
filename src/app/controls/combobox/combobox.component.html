@@ -1,8 +1,8 @@
 <mat-form-field>
   <input type="text" matInput [formControl]="control" [matAutocomplete]="auto">
-  <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-    <mat-option *ngFor="let item of filteredItems$ | async" [value]="item.Value">
-      {{item.Text}}
+  <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn">
+    <mat-option *ngFor="let item of filteredItems$ | async" [value]="item">
+      {{DisplayTemplate(item)}}
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

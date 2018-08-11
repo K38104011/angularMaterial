@@ -1,9 +1,9 @@
-import { Component, OnInit   } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { Observable, from } from 'rxjs';
+import { Component, OnInit, ViewChild   } from '@angular/core';
+import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ComboboxConfig, ComboboxItem } from '../controls/combobox/Combobox';
-import { map, flatMap, switchMap } from 'node_modules/rxjs/operators';
+import { map } from 'node_modules/rxjs/operators';
+import { ComboboxComponent } from '../controls/combobox/combobox.component';
 
 export interface User {
   name: string;
@@ -20,39 +20,46 @@ export class Hero {
   styleUrls: ['./list-todo.component.css']
 })
 export class ListTodoComponent implements OnInit {
-  dataList: any[] = [];
-  comboboxConfig: ComboboxConfig;
+  @ViewChild('c1') combobox1: ComboboxComponent;
+  @ViewChild('c2') combobox2: ComboboxComponent;
+  @ViewChild('c3') combobox3: ComboboxComponent;
 
-  private heroesUrl = 'api/todos';
+
+  comboboxConfig3: ComboboxConfig;
+
   constructor(
     private http: HttpClient) { }
 
-  myControl = new FormControl();
-  options: User[] = [
-    { name: 'Mary' },
-    { name: 'Shelley' },
-    { name: 'Igor' }
-  ];
-  filteredOptions: Observable<User[]>;
-
   ngOnInit() {
-    this.comboboxConfig = { Api: this.heroesUrl };
+    //this.comboboxConfig = { Api: "api/todos" };
+    this.comboboxConfig3 = new ComboboxConfig();
+    this.comboboxConfig3.SearchValue = "Name";
   }
 
   public getHeroes() : Observable<ComboboxItem[]> {
     return this.http.get<any[]>("api/heroes")
       .pipe(
-        map(response => response.map(item => new ComboboxItem(item.name, item.name)))
+        map(response => response.map(item => new ComboboxItem()))
       )
   }
 
-  displayFn(user?: User): string | undefined {
-    return user ? user.name : undefined;
+  public getSampleData() : Observable<ComboboxItem[]> {
+    var data = [
+      { Name: "ABC", Id: 1 },
+      { Name: "BAC", Id: 2 },
+      { Name: "CAB", Id: 3 }
+    ];
+    return of(data.map(item => {
+      const result = { TemplateDisplay : "Name", ...item}
+      return result;
+    }));
   }
 
-  private _filter(name: string): User[] {
-    const filterValue = name.toLowerCase();
+  public handleClick() : void {
+    //console.log(this.combobox1.control.value);
+    //console.log(this.combobox2.control.value);
+    console.log(this.combobox3.getSelectedValue());
+    //console.log(this.combobox3.dataSource.subscribe(x => console.log(x)));
 
-    return this.options.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
   }
 }

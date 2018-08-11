@@ -1,11 +1,9 @@
 export class ComboboxItem {
-    constructor(
-        public Text: string,
-        public Value: string)
-    {
-    }
+    TemplateDisplay: string;
+    [key: string]: any;
 }
 
 export class ComboboxConfig {
-    public Api: string;
+    Api: string;
+    SearchValue: string;
 }

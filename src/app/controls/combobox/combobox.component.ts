@@ -26,10 +26,6 @@ export class ComboboxComponent implements OnInit {
 
   constructor(private http: HttpClient) { }
 
-  getData(): Observable<ComboboxItem[]> {
-    return this.http.get<ComboboxItem[]>(this.config.Api);
-  }
-
   ngOnInit() {
     this.filteredItems$ = this.control.valueChanges.pipe(
       startWith(''),
@@ -37,6 +33,29 @@ export class ComboboxComponent implements OnInit {
       distinctUntilChanged(),
       switchMap(val => this._filter(val))
     );
+  }
+
+  public getSelectedValue()
+  {
+    return this.control.value;
+  }
+
+  public DisplayTemplate(item: ComboboxItem) : string {
+    if (item == null) {
+      return '';
+    }
+    return item[item.TemplateDisplay];
+  }
+
+  public displayFn(item: ComboboxItem) {
+    if (item == null) {
+      return '';
+    }
+    return item[item.TemplateDisplay];
+  }
+
+  private getData(): Observable<ComboboxItem[]> {
+    return this.http.get<ComboboxItem[]>(this.config.Api);
   }
 
   private getDataSource() : Observable<ComboboxItem[]>
@@ -47,13 +66,14 @@ export class ComboboxComponent implements OnInit {
     return this.getData();
   }
 
-  private _filter(value: string): Observable<ComboboxItem[]> {
-    const filterValue = value.toLowerCase();
+  private _filter(item: any): Observable<ComboboxItem[]> {
+    var selected = <ComboboxItem> item;
+    const filterValue =  selected && selected[this.config.SearchValue] ? selected[this.config.SearchValue].toLowerCase() : '' ;
     return this
       .getDataSource()
       .pipe(
         map(response => {
-          return response.filter(option => option.Text.toLocaleLowerCase().indexOf(filterValue) === 0);
+          return response.filter(option => option[this.config.SearchValue].toLocaleLowerCase().indexOf(filterValue) === 0);
         })
       );
   }
