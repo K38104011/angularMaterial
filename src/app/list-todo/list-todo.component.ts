@@ -34,6 +34,9 @@ export class ListTodoComponent implements OnInit {
     //this.comboboxConfig = { Api: "api/todos" };
     this.comboboxConfig3 = new ComboboxConfig();
     this.comboboxConfig3.SearchValue = "Name";
+    this.comboboxConfig3.displayTemplate = function(item: ComboboxItem) : string {
+      return `${item.Id}-${item.Name}`
+    };
   }
 
   public getHeroes() : Observable<ComboboxItem[]> {
@@ -50,7 +53,7 @@ export class ListTodoComponent implements OnInit {
       { Name: "CAB", Id: 3 }
     ];
     return of(data.map(item => {
-      const result = { TemplateDisplay : "Name", ...item}
+      const result = { TemplateDisplay : "Name", ...item} as ComboboxItem;
       return result;
     }));
   }

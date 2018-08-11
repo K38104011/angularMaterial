@@ -6,4 +6,5 @@ export class ComboboxItem {
 export class ComboboxConfig {
     Api: string;
     SearchValue: string;
+    displayTemplate?: (item: ComboboxItem) => string;
 }
