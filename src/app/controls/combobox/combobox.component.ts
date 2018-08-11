@@ -66,9 +66,14 @@ export class ComboboxComponent implements OnInit {
     return this.getData();
   }
 
-  private _filter(item: any): Observable<ComboboxItem[]> {
-    var selected = <ComboboxItem> item;
-    const filterValue =  selected && selected[this.config.SearchValue] ? selected[this.config.SearchValue].toLowerCase() : '' ;
+  private _filter(value: string | any): Observable<ComboboxItem[]> {
+    let filterValue = "";
+    if (typeof value === "string") {
+      filterValue = value.toString().toLowerCase();
+    }
+    else {
+      filterValue = value[this.config.SearchValue];
+    }
     return this
       .getDataSource()
       .pipe(
