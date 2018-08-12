@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, ElementRef, Renderer2, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { FormControl } from 'node_modules/@angular/forms';
-import { Observable, of } from 'node_modules/rxjs';
+import { Observable } from 'node_modules/rxjs';
 import {
   startWith,
   map,
@@ -10,7 +10,7 @@ import {
 } from 'node_modules/rxjs/operators';
 import { HttpClient } from 'node_modules/@angular/common/http';
 import { ComboboxConfig } from './Combobox';
-import { MatFormField } from '../../../../node_modules/@angular/material';
+import { MatFormField } from 'node_modules/@angular/material';
 
 @Component({
   selector: 'combobox',
@@ -18,8 +18,8 @@ import { MatFormField } from '../../../../node_modules/@angular/material';
   styleUrls: ['./combobox.component.css']
 })
 
-export class ComboboxComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatFormField, {read: ElementRef}) formFieldEl: ElementRef;
+export class ComboboxComponent implements OnInit {
+  @ViewChild(MatFormField, { read: ElementRef }) formFieldEl: ElementRef;
 
   @Input() config: ComboboxConfig;
   @Input() dataSource: Observable<any[]> | undefined;
@@ -30,7 +30,6 @@ export class ComboboxComponent implements OnInit, AfterViewInit {
   private _searchInclude: boolean = true;
 
   constructor(private http: HttpClient,
-    private el: ElementRef,
     private renderer: Renderer2) { }
 
   ngOnInit() {
@@ -40,10 +39,6 @@ export class ComboboxComponent implements OnInit, AfterViewInit {
       distinctUntilChanged(),
       switchMap(val => this._filter(val))
     );
-  }
-
-  ngAfterViewInit(): void {
-    console.log(this.el);
   }
 
   set setWitdth(val: string) {
@@ -65,7 +60,10 @@ export class ComboboxComponent implements OnInit, AfterViewInit {
   }
 
   get selectedItem() {
-    return this.control.value;
+    if (typeof this.control.value === "object") {
+      return this.control.value;
+    }
+    return undefined;
   }
 
   get isRequired() {
@@ -109,7 +107,11 @@ export class ComboboxComponent implements OnInit, AfterViewInit {
       .getDataSource()
       .pipe(
         map(response => {
-          return response.filter(option => this.filterOption(option, propertyName, filterValue))
+          var filteredOptions = response
+            .filter(option =>
+              this.filterOption(option, propertyName, filterValue)
+            );
+          return filteredOptions;
         })
       );
   }

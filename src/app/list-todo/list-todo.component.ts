@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild   } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 import { ComboboxConfig } from '../controls/combobox/Combobox';
 import { ComboboxComponent } from '../controls/combobox/combobox.component';
 
@@ -14,19 +13,20 @@ export class ListTodoComponent implements OnInit {
   @ViewChild('c2') combobox2: ComboboxComponent;
   @ViewChild('c3') combobox3: ComboboxComponent;
 
+  comboboxConfig1: ComboboxConfig;
   comboboxConfig3: ComboboxConfig;
 
-  constructor(
-    private http: HttpClient) { }
+  constructor() { }
 
   ngOnInit() {
+    this.comboboxConfig1 = new ComboboxConfig();
+    this.comboboxConfig1.api = "api/heroes";
+    this.comboboxConfig1.text = "name";
+    this.comboboxConfig1.value = "id";
+
     this.comboboxConfig3 = new ComboboxConfig();
     this.comboboxConfig3.text = "Name";
     this.comboboxConfig3.value = "Id";
-  }
-
-  public getHeroes() : Observable<any[]> {
-    return this.http.get<any[]>("api/heroes");
   }
 
   public getSampleData() : Observable<any[]> {
@@ -39,6 +39,10 @@ export class ListTodoComponent implements OnInit {
   }
 
   public handleClick() : void {
+    console.log(this.combobox1.selectedItem);
+    console.log(this.combobox1.selectedText);
+    console.log(this.combobox1.selectedValue);
+
     this.combobox3.setWitdth = "300px";
     this.combobox3.selectedValue = 1;
     console.log(this.combobox3.isRequired);
