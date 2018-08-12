@@ -1,15 +1,15 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl } from 'node_modules/@angular/forms';
-import { Observable } from 'node_modules/rxjs';
+import { Observable, of } from 'node_modules/rxjs';
 import {
   startWith,
   map,
   debounceTime,
   distinctUntilChanged,
-  switchMap
+  switchMap,
 } from 'node_modules/rxjs/operators';
 import { HttpClient } from 'node_modules/@angular/common/http';
-import { ComboboxConfig, ComboboxItem } from './Combobox';
+import { ComboboxConfig } from './Combobox';
 
 @Component({
   selector: 'combobox',
@@ -19,10 +19,12 @@ import { ComboboxConfig, ComboboxItem } from './Combobox';
 
 export class ComboboxComponent implements OnInit {
   @Input() config: ComboboxConfig;
-  @Input() dataSource: Observable<ComboboxItem[]>|undefined;
+  @Input() dataSource: Observable<any[]> | undefined;
 
   control = new FormControl();
-  filteredItems$: Observable<ComboboxItem[]>;
+  filteredItems$: Observable<any[]>;
+
+  private _searchInclude: boolean = true;
 
   constructor(private http: HttpClient) { }
 
@@ -35,51 +37,71 @@ export class ComboboxComponent implements OnInit {
     );
   }
 
-  public getSelectedValue()
-  {
-    return this.control.value;
+  set selectedValue(value: any) {
+    this._filter(value, this.config.value).subscribe(e => {
+      this.control.setValue(e[0]);
+    });
   }
 
-  public DisplayTemplate(item: ComboboxItem) : string {
-    if (item == null) {
-      return '';
-    }
-    return item[item.TemplateDisplay];
+  get selectedText() {
+    return this.control.value[this.config.text];
   }
 
-  public displayFn(item: ComboboxItem) {
-    if (item == null) {
-      return '';
-    }
-    return item[item.TemplateDisplay];
+  get selectedValue() {
+    return this.control.value[this.config.value];
   }
 
-  private getData(): Observable<ComboboxItem[]> {
-    return this.http.get<ComboboxItem[]>(this.config.Api);
+  get isRequired() {
+    return this.config.required;
   }
 
-  private getDataSource() : Observable<ComboboxItem[]>
-  {
-    if (this.dataSource){
+  get errors() {
+    return this.control.errors;
+  }
+
+  private getData(): Observable<any[]> {
+    return this.http.get<any[]>(this.config.api);
+  }
+
+  private getDataSource(): Observable<any[]> {
+    if (this.dataSource) {
       return this.dataSource;
     }
     return this.getData();
   }
 
-  private _filter(value: string | any): Observable<ComboboxItem[]> {
-    let filterValue = "";
-    if (typeof value === "string") {
-      filterValue = value.toString().toLowerCase();
+  private getFilterValue(value: any, propertyName?: string): string {
+    if (!value) {
+      return value;
     }
-    else {
-      filterValue = value[this.config.SearchValue];
+    let filterValue = value.toString();
+    if (typeof value === "object" && propertyName && propertyName in value) {
+      filterValue = value[propertyName].toString();
     }
+    filterValue = filterValue.toLowerCase();
+    return filterValue;
+  }
+
+  private _filter(value: any, propertyName?: string): Observable<any[]> {
+    this._searchInclude = typeof value === "string";
+
+    const filterValue = this.getFilterValue(value, propertyName);
+    propertyName = propertyName || this.config.text;
+
     return this
       .getDataSource()
       .pipe(
         map(response => {
-          return response.filter(option => option[this.config.SearchValue].toLocaleLowerCase().indexOf(filterValue) === 0);
+          return response.filter(option => this.filterOption(option, propertyName, filterValue))
         })
       );
+  }
+
+  private filterOption(option: any, propertyName: string, filterValue: string): boolean {
+    var value = option[propertyName].toString().toLowerCase();
+    if (this._searchInclude) {
+      return value.indexOf(filterValue) !== -1;
+    }
+    return value === filterValue;
   }
 } 

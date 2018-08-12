@@ -1,18 +1,8 @@
 import { Component, OnInit, ViewChild   } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { ComboboxConfig, ComboboxItem } from '../controls/combobox/Combobox';
-import { map } from 'node_modules/rxjs/operators';
+import { ComboboxConfig } from '../controls/combobox/Combobox';
 import { ComboboxComponent } from '../controls/combobox/combobox.component';
-
-export interface User {
-  name: string;
-}
-
-export class Hero {
-  id: number;
-  name: string; 
-}
 
 @Component({
   selector: 'app-list-todo',
@@ -24,44 +14,41 @@ export class ListTodoComponent implements OnInit {
   @ViewChild('c2') combobox2: ComboboxComponent;
   @ViewChild('c3') combobox3: ComboboxComponent;
 
-
   comboboxConfig3: ComboboxConfig;
 
   constructor(
     private http: HttpClient) { }
 
   ngOnInit() {
-    //this.comboboxConfig = { Api: "api/todos" };
     this.comboboxConfig3 = new ComboboxConfig();
-    this.comboboxConfig3.SearchValue = "Name";
-    this.comboboxConfig3.displayTemplate = function(item: ComboboxItem) : string {
-      return `${item.Id}-${item.Name}`
-    };
+    this.comboboxConfig3.text = "Name";
+    this.comboboxConfig3.value = "Id";
   }
 
-  public getHeroes() : Observable<ComboboxItem[]> {
-    return this.http.get<any[]>("api/heroes")
-      .pipe(
-        map(response => response.map(item => new ComboboxItem()))
-      )
+  public getHeroes() : Observable<any[]> {
+    return this.http.get<any[]>("api/heroes");
   }
 
-  public getSampleData() : Observable<ComboboxItem[]> {
+  public getSampleData() : Observable<any[]> {
     var data = [
       { Name: "ABC", Id: 1 },
       { Name: "BAC", Id: 2 },
       { Name: "CAB", Id: 3 }
     ];
-    return of(data.map(item => {
-      const result = { TemplateDisplay : "Name", ...item} as ComboboxItem;
-      return result;
-    }));
+    return of(data);
   }
 
   public handleClick() : void {
     //console.log(this.combobox1.control.value);
     //console.log(this.combobox2.control.value);
-    console.log(this.combobox3.getSelectedValue());
+    this.combobox3.selectedValue = 1;
+    // console.log(this.combobox3.selectedText);
+    // console.log(this.combobox3.selectedValue);
+    // this.combobox3.selectedValue = null;
+    
+    console.log(this.combobox3.isRequired);
+    console.log(this.combobox3.errors);
+
     //console.log(this.combobox3.dataSource.subscribe(x => console.log(x)));
 
   }
