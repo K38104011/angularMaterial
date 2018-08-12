@@ -1,4 +1,4 @@
-<mat-form-field>
+<mat-form-field class="comboboxClass">
   <input type="text" matInput [formControl]="control" [matAutocomplete]="auto" [required]="config.required">
   <mat-autocomplete autoActiveFirstOption [attr.data-combobox-display-prop]="config.text" #auto="matAutocomplete" 
   [displayWith]="config.selectedValueTemplateFn">

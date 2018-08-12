@@ -39,17 +39,10 @@ export class ListTodoComponent implements OnInit {
   }
 
   public handleClick() : void {
-    //console.log(this.combobox1.control.value);
-    //console.log(this.combobox2.control.value);
+    this.combobox3.setWitdth = "300px";
     this.combobox3.selectedValue = 1;
-    // console.log(this.combobox3.selectedText);
-    // console.log(this.combobox3.selectedValue);
-    // this.combobox3.selectedValue = null;
-    
     console.log(this.combobox3.isRequired);
     console.log(this.combobox3.errors);
-
-    //console.log(this.combobox3.dataSource.subscribe(x => console.log(x)));
-
+    console.log(this.combobox3.selectedItem);
   }
 }

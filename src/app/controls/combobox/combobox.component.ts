@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, Renderer2, AfterViewInit, ViewChild } from '@angular/core';
 import { FormControl } from 'node_modules/@angular/forms';
 import { Observable, of } from 'node_modules/rxjs';
 import {
@@ -10,6 +10,7 @@ import {
 } from 'node_modules/rxjs/operators';
 import { HttpClient } from 'node_modules/@angular/common/http';
 import { ComboboxConfig } from './Combobox';
+import { MatFormField } from '../../../../node_modules/@angular/material';
 
 @Component({
   selector: 'combobox',
@@ -17,7 +18,9 @@ import { ComboboxConfig } from './Combobox';
   styleUrls: ['./combobox.component.css']
 })
 
-export class ComboboxComponent implements OnInit {
+export class ComboboxComponent implements OnInit, AfterViewInit {
+  @ViewChild(MatFormField, {read: ElementRef}) formFieldEl: ElementRef;
+
   @Input() config: ComboboxConfig;
   @Input() dataSource: Observable<any[]> | undefined;
 
@@ -26,7 +29,9 @@ export class ComboboxComponent implements OnInit {
 
   private _searchInclude: boolean = true;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    private el: ElementRef,
+    private renderer: Renderer2) { }
 
   ngOnInit() {
     this.filteredItems$ = this.control.valueChanges.pipe(
@@ -35,6 +40,14 @@ export class ComboboxComponent implements OnInit {
       distinctUntilChanged(),
       switchMap(val => this._filter(val))
     );
+  }
+
+  ngAfterViewInit(): void {
+    console.log(this.el);
+  }
+
+  set setWitdth(val: string) {
+    this.renderer.setStyle(this.formFieldEl.nativeElement, 'width', val);
   }
 
   set selectedValue(value: any) {
@@ -49,6 +62,10 @@ export class ComboboxComponent implements OnInit {
 
   get selectedValue() {
     return this.control.value[this.config.value];
+  }
+
+  get selectedItem() {
+    return this.control.value;
   }
 
   get isRequired() {
