@@ -12,12 +12,20 @@ import { TodoRoutingModule } from './/todo-routing.module';
 import { ListTodoComponent } from './list-todo/list-todo.component';
 import { MatTodoModule } from './/mat-todo.module';
 import { ComboboxComponent } from './controls/combobox/combobox.component';
+import { PanelComponent } from './controls/panel/panel.component';
+import { PanelDemoComponent } from './panel-demo/panel-demo.component';
+import { TableDemoComponent } from './table-demo/table-demo.component';
+import { TableInputComponent } from './table-demo/table-input/table-input.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ListTodoComponent,
-    ComboboxComponent
+    ComboboxComponent,
+    PanelComponent,
+    PanelDemoComponent,
+    TableDemoComponent,
+    TableInputComponent
   ],
   imports: [
     BrowserAnimationsModule,

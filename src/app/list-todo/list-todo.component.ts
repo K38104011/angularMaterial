@@ -23,6 +23,7 @@ export class ListTodoComponent implements OnInit {
     this.comboboxConfig1.api = "api/heroes";
     this.comboboxConfig1.text = "name";
     this.comboboxConfig1.value = "id";
+    this.comboboxConfig1.required = true;
 
     this.comboboxConfig3 = new ComboboxConfig();
     this.comboboxConfig3.text = "Name";

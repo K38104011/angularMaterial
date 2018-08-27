@@ -1,0 +1,7 @@
+<mat-grid-list cols="3" rowHeight="2:1">
+  <ng-container *ngFor="let item of dataSource | async" #container>
+    <mat-grid-tile>
+      {{ item | json }}
+    </mat-grid-tile>
+  </ng-container>
+</mat-grid-list>
